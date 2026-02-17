@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ViewPromptIdRouteImport } from './routes/view.$promptId'
+import { Route as EditPromptIdRouteImport } from './routes/edit.$promptId'
 
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
@@ -22,31 +24,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ViewPromptIdRoute = ViewPromptIdRouteImport.update({
+  id: '/view/$promptId',
+  path: '/view/$promptId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditPromptIdRoute = EditPromptIdRouteImport.update({
+  id: '/edit/$promptId',
+  path: '/edit/$promptId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/edit/$promptId': typeof EditPromptIdRoute
+  '/view/$promptId': typeof ViewPromptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/edit/$promptId': typeof EditPromptIdRoute
+  '/view/$promptId': typeof ViewPromptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/edit/$promptId': typeof EditPromptIdRoute
+  '/view/$promptId': typeof ViewPromptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create'
+  fullPaths: '/' | '/create' | '/edit/$promptId' | '/view/$promptId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create'
-  id: '__root__' | '/' | '/create'
+  to: '/' | '/create' | '/edit/$promptId' | '/view/$promptId'
+  id: '__root__' | '/' | '/create' | '/edit/$promptId' | '/view/$promptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
+  EditPromptIdRoute: typeof EditPromptIdRoute
+  ViewPromptIdRoute: typeof ViewPromptIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +85,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/view/$promptId': {
+      id: '/view/$promptId'
+      path: '/view/$promptId'
+      fullPath: '/view/$promptId'
+      preLoaderRoute: typeof ViewPromptIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/edit/$promptId': {
+      id: '/edit/$promptId'
+      path: '/edit/$promptId'
+      fullPath: '/edit/$promptId'
+      preLoaderRoute: typeof EditPromptIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
+  EditPromptIdRoute: EditPromptIdRoute,
+  ViewPromptIdRoute: ViewPromptIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

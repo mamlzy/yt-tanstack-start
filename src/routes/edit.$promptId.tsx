@@ -6,7 +6,7 @@ import { Separator } from '@/components/selia/separator';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
 
-export const Route = createFileRoute('/create')({
+export const Route = createFileRoute('/edit/$promptId')({
   component: RouteComponent,
 });
 
@@ -23,7 +23,7 @@ function RouteComponent() {
   return (
     <>
       <Header>
-        <Heading>Create Prompt</Heading>
+        <Heading>Edit Prompt</Heading>
         <Button
           variant='secondary'
           nativeButton={false}
@@ -35,7 +35,13 @@ function RouteComponent() {
         />
       </Header>
       <Separator className='my-6' />
-      <PromptForm onSubmit={handleSubmit} />
+      <PromptForm
+        onSubmit={handleSubmit}
+        data={{
+          title: 'Prompt Title',
+          content: 'Prompt Content',
+        }}
+      />
     </>
   );
 }

@@ -18,12 +18,56 @@ import {
 } from '@/components/selia/menu';
 import { EllipsisVerticalIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { Header } from '@/components/header';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogClose,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogPopup,
+  AlertDialogTitle,
+} from '@/components/selia/alert-dialog';
+import { IconBox } from '@/components/selia/icon-box';
+import { useState } from 'react';
+import { Strong } from '@/components/selia/text';
 
 export const Route = createFileRoute('/')({ component: App });
 
 function App() {
+  const [beingDeleted, setBeingDeleted] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+
   return (
     <>
+      <AlertDialog
+        open={!!beingDeleted}
+        onOpenChange={() => setBeingDeleted(null)}
+      >
+        <AlertDialogPopup>
+          <AlertDialogHeader>
+            <IconBox variant='danger'>
+              <Trash2Icon />
+            </IconBox>
+            <AlertDialogTitle>Delete Prompt</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogBody>
+            <AlertDialogDescription>
+              Do you want to delete "<Strong>{beingDeleted?.title}</Strong>"
+              this prompt?
+            </AlertDialogDescription>
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <AlertDialogClose>Cancel</AlertDialogClose>
+            <AlertDialogClose
+              render={<Button variant='danger'>Delete</Button>}
+            ></AlertDialogClose>
+          </AlertDialogFooter>
+        </AlertDialogPopup>
+      </AlertDialog>
+
       <Header>
         <Heading>Prompts</Heading>
         <Button
@@ -40,9 +84,21 @@ function App() {
               <ItemDescription>{prompt.description}</ItemDescription>
             </ItemContent>
             <ItemAction>
-              <Button variant='outline' size='sm'>
-                View
-              </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                nativeButton={false}
+                render={
+                  <Link
+                    to='/view/$promptId'
+                    params={{
+                      promptId: prompt.id,
+                    }}
+                  >
+                    View
+                  </Link>
+                }
+              />
               <Menu>
                 <MenuTrigger
                   render={
@@ -52,10 +108,22 @@ function App() {
                   }
                 />
                 <MenuPopup>
-                  <MenuItem>
-                    <PencilIcon /> Edit
-                  </MenuItem>
-                  <MenuItem className='text-danger'>
+                  <MenuItem
+                    render={
+                      <Link
+                        to='/edit/$promptId'
+                        params={{ promptId: prompt.id }}
+                      >
+                        <PencilIcon /> Edit
+                      </Link>
+                    }
+                  ></MenuItem>
+                  <MenuItem
+                    className='text-danger'
+                    onClick={() => {
+                      setBeingDeleted(prompt);
+                    }}
+                  >
                     <Trash2Icon className='text-danger' /> Delete
                   </MenuItem>
                 </MenuPopup>
