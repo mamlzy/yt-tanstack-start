@@ -3,6 +3,7 @@ import { Button } from '@/components/selia/button';
 import { Heading } from '@/components/selia/heading';
 import { Separator } from '@/components/selia/separator';
 import { Text } from '@/components/selia/text';
+import { useDeleteStore } from '@/stores/delete-store';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
 
@@ -12,6 +13,8 @@ export const Route = createFileRoute('/view/$promptId')({
 
 function RouteComponent() {
   const params = Route.useParams();
+
+  const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted);
 
   return (
     <>
@@ -59,7 +62,16 @@ function RouteComponent() {
             </Link>
           }
         ></Button>
-        <Button variant='danger' block>
+        <Button
+          variant='danger'
+          block
+          onClick={() => {
+            setBeingDeleted({
+              id: params.promptId,
+              title: 'Create Javascript Game',
+            });
+          }}
+        >
           Delete
         </Button>
       </footer>

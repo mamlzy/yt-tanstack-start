@@ -18,56 +18,16 @@ import {
 } from '@/components/selia/menu';
 import { EllipsisVerticalIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { Header } from '@/components/header';
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogClose,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogPopup,
-  AlertDialogTitle,
-} from '@/components/selia/alert-dialog';
-import { IconBox } from '@/components/selia/icon-box';
-import { useState } from 'react';
-import { Strong } from '@/components/selia/text';
+
+import { useDeleteStore } from '@/stores/delete-store';
 
 export const Route = createFileRoute('/')({ component: App });
 
 function App() {
-  const [beingDeleted, setBeingDeleted] = useState<{
-    id: string;
-    title: string;
-  } | null>(null);
+  const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted);
 
   return (
     <>
-      <AlertDialog
-        open={!!beingDeleted}
-        onOpenChange={() => setBeingDeleted(null)}
-      >
-        <AlertDialogPopup>
-          <AlertDialogHeader>
-            <IconBox variant='danger'>
-              <Trash2Icon />
-            </IconBox>
-            <AlertDialogTitle>Delete Prompt</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogBody>
-            <AlertDialogDescription>
-              Do you want to delete "<Strong>{beingDeleted?.title}</Strong>"
-              this prompt?
-            </AlertDialogDescription>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <AlertDialogClose>Cancel</AlertDialogClose>
-            <AlertDialogClose
-              render={<Button variant='danger'>Delete</Button>}
-            ></AlertDialogClose>
-          </AlertDialogFooter>
-        </AlertDialogPopup>
-      </AlertDialog>
-
       <Header>
         <Heading>Prompts</Heading>
         <Button

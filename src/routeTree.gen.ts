@@ -9,11 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ViewPromptIdRouteImport } from './routes/view.$promptId'
 import { Route as EditPromptIdRouteImport } from './routes/edit.$promptId'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
@@ -38,12 +50,16 @@ const EditPromptIdRoute = EditPromptIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/edit/$promptId': typeof EditPromptIdRoute
   '/view/$promptId': typeof ViewPromptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/edit/$promptId': typeof EditPromptIdRoute
   '/view/$promptId': typeof ViewPromptIdRoute
 }
@@ -51,26 +67,63 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/edit/$promptId': typeof EditPromptIdRoute
   '/view/$promptId': typeof ViewPromptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/edit/$promptId' | '/view/$promptId'
+  fullPaths:
+    | '/'
+    | '/create'
+    | '/sign-in'
+    | '/sign-up'
+    | '/edit/$promptId'
+    | '/view/$promptId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/edit/$promptId' | '/view/$promptId'
-  id: '__root__' | '/' | '/create' | '/edit/$promptId' | '/view/$promptId'
+  to:
+    | '/'
+    | '/create'
+    | '/sign-in'
+    | '/sign-up'
+    | '/edit/$promptId'
+    | '/view/$promptId'
+  id:
+    | '__root__'
+    | '/'
+    | '/create'
+    | '/sign-in'
+    | '/sign-up'
+    | '/edit/$promptId'
+    | '/view/$promptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
   EditPromptIdRoute: typeof EditPromptIdRoute
   ViewPromptIdRoute: typeof ViewPromptIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/create': {
       id: '/create'
       path: '/create'
@@ -105,6 +158,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
   EditPromptIdRoute: EditPromptIdRoute,
   ViewPromptIdRoute: ViewPromptIdRoute,
 }

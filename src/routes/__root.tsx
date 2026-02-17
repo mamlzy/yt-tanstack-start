@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 
 import appCss from '../styles.css?url';
+import { DeleteDialog } from '@/components/delete-dialog';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -35,6 +36,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <DeleteDialog />
+
         <div className='root w-full max-w-sm mx-auto py-8'>{children}</div>
         <TanStackDevtools
           config={{
