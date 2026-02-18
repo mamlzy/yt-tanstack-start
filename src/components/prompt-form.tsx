@@ -11,8 +11,10 @@ import { Textarea } from '@/components/selia/textarea';
 
 export function PromptForm({
   onSubmit,
+  loading,
   data,
 }: React.ComponentProps<typeof Form> & {
+  loading?: boolean;
   data?: {
     title?: string;
     content?: string;
@@ -46,7 +48,7 @@ export function PromptForm({
         />
         <FieldError match='valueMissing'>Content is Required</FieldError>
       </Field>
-      <Button type='submit'>
+      <Button type='submit' progress={loading}>
         {data?.title ? 'Update Prompt' : 'Create Prompt'}
       </Button>
     </Form>
