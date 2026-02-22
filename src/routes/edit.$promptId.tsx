@@ -70,6 +70,13 @@ export const Route = createFileRoute('/edit/$promptId')({
 
     return { prompt };
   },
+  head: ({ loaderData }) => ({
+    meta: [
+      {
+        title: `Edit: ${loaderData?.prompt.title || 'Prompt'}`,
+      },
+    ],
+  }),
   notFoundComponent: () => (
     <div>
       Prompt not found.{' '}

@@ -30,6 +30,13 @@ const createPrompt = createServerFn({ method: 'POST' })
 
 export const Route = createFileRoute('/create')({
   component: RouteComponent,
+  head: () => ({
+    meta: [
+      {
+        title: 'Create Prompt',
+      },
+    ],
+  }),
 });
 
 function RouteComponent() {

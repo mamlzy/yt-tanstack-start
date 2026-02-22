@@ -28,6 +28,7 @@ const getPrompt = createServerFn()
 
 export const Route = createFileRoute('/view/$promptId')({
   component: RouteComponent,
+
   loader: async ({ params }) => {
     const prompt = await getPrompt({ data: { promptId: params.promptId } });
 
@@ -37,6 +38,13 @@ export const Route = createFileRoute('/view/$promptId')({
 
     return { prompt };
   },
+  head: ({ loaderData }) => ({
+    meta: [
+      {
+        title: loaderData?.prompt.title || 'Prompt Details',
+      },
+    ],
+  }),
   notFoundComponent: () => (
     <div>
       Prompt not found.{' '}

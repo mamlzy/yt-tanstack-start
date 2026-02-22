@@ -23,27 +23,68 @@ import { useDeleteStore } from '@/stores/delete-store';
 import { db } from '@/database/db';
 import { createServerFn } from '@tanstack/react-start';
 
-const getPrompts = createServerFn().handler(async () => {
-  const prompts = await db.query.promptTable.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
+import * as z from 'zod';
+import { PromptSearch } from '@/components/prompt-search';
+
+const getPromptInputSchema = z.object({
+  query: z.string().optional(),
+});
+
+const getPrompts = createServerFn()
+  .inputValidator(getPromptInputSchema)
+  .handler(async ({ data }) => {
+    const prompts = await db.query.promptTable.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              like: data.query ? `%${data.query}%` : undefined,
+            },
+          },
+          {
+            content: {
+              like: data.query ? `%${data.query}%` : undefined,
+            },
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return prompts;
   });
 
-  return prompts;
+const promptSearchSchema = z.object({
+  query: z.string().optional(),
 });
 
 export const Route = createFileRoute('/')({
   component: App,
-  loader: async () => {
-    const prompts = await getPrompts();
+  validateSearch: promptSearchSchema,
+  loaderDeps: ({ search }) => ({ query: search.query }),
+  loader: async ({ deps }) => {
+    const prompts = await getPrompts({
+      data: {
+        query: deps.query,
+      },
+    });
 
     return { prompts };
   },
+  head: () => ({
+    meta: [
+      {
+        title: 'Prompts',
+      },
+    ],
+  }),
 });
 
 function App() {
   const { prompts } = Route.useLoaderData();
+
   const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted);
 
   return (
@@ -56,6 +97,7 @@ function App() {
         />
       </Header>
       <Separator className='my-6' />
+      <PromptSearch />
       <Stack>
         {prompts.map((prompt) => (
           <Item key={prompt.id}>
