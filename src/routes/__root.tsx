@@ -1,6 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
+import { ProgressProvider } from '@bprogress/react';
 
 import appCss from '../styles.css?url';
 import { DeleteDialog } from '@/components/delete-dialog';
@@ -37,21 +38,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <DeleteDialog />
-        <div className='root w-full max-w-sm mx-auto py-8'>{children}</div>
+        <ProgressProvider options={{ showSpinner: false }}>
+          <DeleteDialog />
+          <div className='root w-full max-w-sm mx-auto py-8'>{children}</div>
 
-        <Toast />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+          <Toast />
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        </ProgressProvider>
+
         <Scripts />
       </body>
     </html>
