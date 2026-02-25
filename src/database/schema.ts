@@ -11,3 +11,16 @@ export const promptTable = p.pgTable('prompts', {
     .defaultNow()
     .notNull(),
 });
+
+export const userTable = p.pgTable('users', {
+  id: p.uuid('id').primaryKey().defaultRandom(),
+  name: p.varchar('name', { length: 100 }).notNull(),
+  email: p.varchar('email', { length: 255 }).notNull().unique(),
+  password: p.varchar('password', { length: 255 }).notNull(),
+  createdAt: p.timestamp('created_at').defaultNow().notNull(),
+  updatedAt: p
+    .timestamp('updated_at')
+    .$onUpdate(() => new Date())
+    .defaultNow()
+    .notNull(),
+});
