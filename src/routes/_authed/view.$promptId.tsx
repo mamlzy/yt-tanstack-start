@@ -4,6 +4,7 @@ import { Heading } from '@/components/selia/heading';
 import { Separator } from '@/components/selia/separator';
 import { Text } from '@/components/selia/text';
 import { db } from '@/database/db';
+import { authMiddleware } from '@/middlewares/auth-middleware';
 import { useDeleteStore } from '@/stores/delete-store';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -15,18 +16,20 @@ const getPromptInputSchema = z.object({
 });
 
 const getPrompt = createServerFn()
+  .middleware([authMiddleware])
   .inputValidator(getPromptInputSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const prompt = await db.query.promptTable.findFirst({
       where: {
         id: data.promptId,
+        userId: context.user.id,
       },
     });
 
     return prompt;
   });
 
-export const Route = createFileRoute('/view/$promptId')({
+export const Route = createFileRoute('/_authed/view/$promptId')({
   component: RouteComponent,
 
   loader: async ({ params }) => {

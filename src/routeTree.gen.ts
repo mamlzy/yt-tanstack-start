@@ -9,68 +9,80 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as CreateRouteImport } from './routes/create'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ViewPromptIdRouteImport } from './routes/view.$promptId'
-import { Route as EditPromptIdRouteImport } from './routes/edit.$promptId'
+import { Route as GuestRouteRouteImport } from './routes/_guest/route'
+import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
+import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as GuestSignUpRouteImport } from './routes/_guest/sign-up'
+import { Route as GuestSignInRouteImport } from './routes/_guest/sign-in'
+import { Route as AuthedCreateRouteImport } from './routes/_authed/create'
+import { Route as AuthedViewPromptIdRouteImport } from './routes/_authed/view.$promptId'
+import { Route as AuthedEditPromptIdRouteImport } from './routes/_authed/edit.$promptId'
 
-const SignUpRoute = SignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
+const GuestRouteRoute = GuestRouteRouteImport.update({
+  id: '/_guest',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
+const AuthedRouteRoute = AuthedRouteRouteImport.update({
+  id: '/_authed',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CreateRoute = CreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthedIndexRoute = AuthedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
-const ViewPromptIdRoute = ViewPromptIdRouteImport.update({
+const GuestSignUpRoute = GuestSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => GuestRouteRoute,
+} as any)
+const GuestSignInRoute = GuestSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => GuestRouteRoute,
+} as any)
+const AuthedCreateRoute = AuthedCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedViewPromptIdRoute = AuthedViewPromptIdRouteImport.update({
   id: '/view/$promptId',
   path: '/view/$promptId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
-const EditPromptIdRoute = EditPromptIdRouteImport.update({
+const AuthedEditPromptIdRoute = AuthedEditPromptIdRouteImport.update({
   id: '/edit/$promptId',
   path: '/edit/$promptId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/create': typeof CreateRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
-  '/edit/$promptId': typeof EditPromptIdRoute
-  '/view/$promptId': typeof ViewPromptIdRoute
+  '/': typeof AuthedIndexRoute
+  '/create': typeof AuthedCreateRoute
+  '/sign-in': typeof GuestSignInRoute
+  '/sign-up': typeof GuestSignUpRoute
+  '/edit/$promptId': typeof AuthedEditPromptIdRoute
+  '/view/$promptId': typeof AuthedViewPromptIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/create': typeof CreateRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
-  '/edit/$promptId': typeof EditPromptIdRoute
-  '/view/$promptId': typeof ViewPromptIdRoute
+  '/': typeof AuthedIndexRoute
+  '/create': typeof AuthedCreateRoute
+  '/sign-in': typeof GuestSignInRoute
+  '/sign-up': typeof GuestSignUpRoute
+  '/edit/$promptId': typeof AuthedEditPromptIdRoute
+  '/view/$promptId': typeof AuthedViewPromptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/create': typeof CreateRoute
-  '/sign-in': typeof SignInRoute
-  '/sign-up': typeof SignUpRoute
-  '/edit/$promptId': typeof EditPromptIdRoute
-  '/view/$promptId': typeof ViewPromptIdRoute
+  '/_authed': typeof AuthedRouteRouteWithChildren
+  '/_guest': typeof GuestRouteRouteWithChildren
+  '/_authed/create': typeof AuthedCreateRoute
+  '/_guest/sign-in': typeof GuestSignInRoute
+  '/_guest/sign-up': typeof GuestSignUpRoute
+  '/_authed/': typeof AuthedIndexRoute
+  '/_authed/edit/$promptId': typeof AuthedEditPromptIdRoute
+  '/_authed/view/$promptId': typeof AuthedViewPromptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,77 +103,117 @@ export interface FileRouteTypes {
     | '/view/$promptId'
   id:
     | '__root__'
-    | '/'
-    | '/create'
-    | '/sign-in'
-    | '/sign-up'
-    | '/edit/$promptId'
-    | '/view/$promptId'
+    | '/_authed'
+    | '/_guest'
+    | '/_authed/create'
+    | '/_guest/sign-in'
+    | '/_guest/sign-up'
+    | '/_authed/'
+    | '/_authed/edit/$promptId'
+    | '/_authed/view/$promptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CreateRoute: typeof CreateRoute
-  SignInRoute: typeof SignInRoute
-  SignUpRoute: typeof SignUpRoute
-  EditPromptIdRoute: typeof EditPromptIdRoute
-  ViewPromptIdRoute: typeof ViewPromptIdRoute
+  AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
+  GuestRouteRoute: typeof GuestRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sign-up': {
-      id: '/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof SignUpRouteImport
+    '/_guest': {
+      id: '/_guest'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof GuestRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/create': {
-      id: '/create'
-      path: '/create'
-      fullPath: '/create'
-      preLoaderRoute: typeof CreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
+    '/_authed/': {
+      id: '/_authed/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
-    '/view/$promptId': {
-      id: '/view/$promptId'
+    '/_guest/sign-up': {
+      id: '/_guest/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof GuestSignUpRouteImport
+      parentRoute: typeof GuestRouteRoute
+    }
+    '/_guest/sign-in': {
+      id: '/_guest/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof GuestSignInRouteImport
+      parentRoute: typeof GuestRouteRoute
+    }
+    '/_authed/create': {
+      id: '/_authed/create'
+      path: '/create'
+      fullPath: '/create'
+      preLoaderRoute: typeof AuthedCreateRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/view/$promptId': {
+      id: '/_authed/view/$promptId'
       path: '/view/$promptId'
       fullPath: '/view/$promptId'
-      preLoaderRoute: typeof ViewPromptIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedViewPromptIdRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
-    '/edit/$promptId': {
-      id: '/edit/$promptId'
+    '/_authed/edit/$promptId': {
+      id: '/_authed/edit/$promptId'
       path: '/edit/$promptId'
       fullPath: '/edit/$promptId'
-      preLoaderRoute: typeof EditPromptIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedEditPromptIdRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
   }
 }
 
+interface AuthedRouteRouteChildren {
+  AuthedCreateRoute: typeof AuthedCreateRoute
+  AuthedIndexRoute: typeof AuthedIndexRoute
+  AuthedEditPromptIdRoute: typeof AuthedEditPromptIdRoute
+  AuthedViewPromptIdRoute: typeof AuthedViewPromptIdRoute
+}
+
+const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedCreateRoute: AuthedCreateRoute,
+  AuthedIndexRoute: AuthedIndexRoute,
+  AuthedEditPromptIdRoute: AuthedEditPromptIdRoute,
+  AuthedViewPromptIdRoute: AuthedViewPromptIdRoute,
+}
+
+const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
+  AuthedRouteRouteChildren,
+)
+
+interface GuestRouteRouteChildren {
+  GuestSignInRoute: typeof GuestSignInRoute
+  GuestSignUpRoute: typeof GuestSignUpRoute
+}
+
+const GuestRouteRouteChildren: GuestRouteRouteChildren = {
+  GuestSignInRoute: GuestSignInRoute,
+  GuestSignUpRoute: GuestSignUpRoute,
+}
+
+const GuestRouteRouteWithChildren = GuestRouteRoute._addFileChildren(
+  GuestRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CreateRoute: CreateRoute,
-  SignInRoute: SignInRoute,
-  SignUpRoute: SignUpRoute,
-  EditPromptIdRoute: EditPromptIdRoute,
-  ViewPromptIdRoute: ViewPromptIdRoute,
+  AuthedRouteRoute: AuthedRouteRouteWithChildren,
+  GuestRouteRoute: GuestRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

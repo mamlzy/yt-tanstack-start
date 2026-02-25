@@ -57,7 +57,7 @@ const signUp = createServerFn({ method: 'POST' })
     });
   });
 
-export const Route = createFileRoute('/sign-up')({
+export const Route = createFileRoute('/_guest/sign-up')({
   component: RouteComponent,
 });
 
@@ -74,14 +74,6 @@ function RouteComponent() {
 
     setError(null);
 
-    console.log({
-      data: {
-        name: formData.get('name') as string,
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
-      },
-    });
-
     try {
       setLoading(true);
       const signUpRes = await signUpFn({
@@ -91,8 +83,6 @@ function RouteComponent() {
           password: formData.get('password') as string,
         },
       });
-
-      console.log({ signUpRes });
 
       if (signUpRes?.error) {
         setError(signUpRes.error);

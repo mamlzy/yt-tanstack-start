@@ -2,6 +2,7 @@ import * as p from 'drizzle-orm/pg-core';
 
 export const promptTable = p.pgTable('prompts', {
   id: p.uuid('id').primaryKey().defaultRandom(),
+  userId: p.uuid('user_id').references(() => userTable.id),
   title: p.varchar('title', { length: 100 }).notNull(),
   content: p.text('content').notNull(),
   createdAt: p.timestamp('created_at').defaultNow().notNull(),

@@ -11,6 +11,7 @@ import { db } from '@/database/db';
 import { promptTable } from '@/database/schema';
 import { useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/selia/alert';
+import { authMiddleware } from '@/middlewares/auth-middleware';
 
 const promptInputSchema = z.object({
   title: z.string().min(1).max(50),
@@ -18,17 +19,19 @@ const promptInputSchema = z.object({
 });
 
 const createPrompt = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .inputValidator(promptInputSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     await db.insert(promptTable).values({
       title: data.title,
       content: data.content,
+      userId: context.user.id,
     });
 
     throw redirect({ to: '/' });
   });
 
-export const Route = createFileRoute('/create')({
+export const Route = createFileRoute('/_authed/create')({
   component: RouteComponent,
   head: () => ({
     meta: [

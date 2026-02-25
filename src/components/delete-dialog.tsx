@@ -19,17 +19,26 @@ import { useState } from 'react';
 import { toastManager } from './selia/toast';
 import { db } from '@/database/db';
 import { promptTable } from '@/database/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { redirect, useRouter } from '@tanstack/react-router';
+import { authMiddleware } from '@/middlewares/auth-middleware';
 
 const deletePromptInputSchema = z.object({
   promptId: z.uuid(),
 });
 
 export const deletePrompt = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .inputValidator(deletePromptInputSchema)
-  .handler(async ({ data }) => {
-    await db.delete(promptTable).where(eq(promptTable.id, data.promptId));
+  .handler(async ({ data, context }) => {
+    await db
+      .delete(promptTable)
+      .where(
+        and(
+          eq(promptTable.id, data.promptId),
+          eq(promptTable.userId, context.user.id),
+        ),
+      );
     throw redirect({
       to: '/',
     });

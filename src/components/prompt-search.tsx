@@ -6,7 +6,7 @@ import { Button } from '@/components/selia/button';
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-const Route = getRouteApi('/');
+const Route = getRouteApi('/_authed/');
 
 export function PromptSearch() {
   const navigate = useNavigate();

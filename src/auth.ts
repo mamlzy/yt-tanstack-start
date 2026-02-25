@@ -2,6 +2,7 @@ import { createServerFn, createServerOnlyFn } from '@tanstack/react-start';
 import { useAppSession } from '@/lib/session';
 import { db } from './database/db';
 import bcrypt from 'bcryptjs';
+import { redirect } from '@tanstack/react-router';
 
 export const getCurrentUser = createServerFn().handler(async () => {
   const session = await useAppSession();
@@ -41,3 +42,12 @@ export const authenticate = createServerOnlyFn(
     return isValid ? user : null;
   },
 );
+
+export const logout = createServerFn({ method: 'POST' }).handler(async () => {
+  const session = await useAppSession();
+
+  await session.clear();
+  throw redirect({
+    to: '/sign-in',
+  });
+});

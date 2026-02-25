@@ -6,6 +6,7 @@ import { Heading } from '@/components/selia/heading';
 import { Separator } from '@/components/selia/separator';
 import { db } from '@/database/db';
 import { promptTable } from '@/database/schema';
+import { authMiddleware } from '@/middlewares/auth-middleware';
 import {
   createFileRoute,
   Link,
@@ -13,7 +14,7 @@ import {
   redirect,
 } from '@tanstack/react-router';
 import { createServerFn, useServerFn } from '@tanstack/react-start';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { ArrowLeftIcon, XCircleIcon } from 'lucide-react';
 import { useState } from 'react';
 import * as z from 'zod';
@@ -23,11 +24,13 @@ const getPromptInputSchema = z.object({
 });
 
 const getPrompt = createServerFn()
+  .middleware([authMiddleware])
   .inputValidator(getPromptInputSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const prompt = await db.query.promptTable.findFirst({
       where: {
         id: data.promptId,
+        userId: context.user.id,
       },
     });
 
@@ -41,15 +44,21 @@ const updatePromptInputSchema = z.object({
 });
 
 const updatePrompt = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .inputValidator(updatePromptInputSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     await db
       .update(promptTable)
       .set({
         title: data.title,
         content: data.content,
       })
-      .where(eq(promptTable.id, data.promptId));
+      .where(
+        and(
+          eq(promptTable.id, data.promptId),
+          eq(promptTable.userId, context.user.id),
+        ),
+      );
 
     throw redirect({
       to: '/view/$promptId',
@@ -59,7 +68,7 @@ const updatePrompt = createServerFn({ method: 'POST' })
     });
   });
 
-export const Route = createFileRoute('/edit/$promptId')({
+export const Route = createFileRoute('/_authed/edit/$promptId')({
   component: RouteComponent,
   loader: async ({ params }) => {
     const prompt = await getPrompt({ data: { promptId: params.promptId } });

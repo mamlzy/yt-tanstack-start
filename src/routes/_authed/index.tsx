@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { Button } from '@/components/selia/button';
 import { Heading } from '@/components/selia/heading';
 import { Separator } from '@/components/selia/separator';
@@ -25,17 +25,19 @@ import { createServerFn } from '@tanstack/react-start';
 
 import * as z from 'zod';
 import { PromptSearch } from '@/components/prompt-search';
-import { getCurrentUser } from '@/auth';
+import { authMiddleware } from '@/middlewares/auth-middleware';
 
 const getPromptInputSchema = z.object({
   query: z.string().optional(),
 });
 
 const getPrompts = createServerFn()
+  .middleware([authMiddleware])
   .inputValidator(getPromptInputSchema)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const prompts = await db.query.promptTable.findMany({
       where: {
+        userId: context.user.id,
         OR: [
           {
             title: {
@@ -61,19 +63,8 @@ const promptSearchSchema = z.object({
   query: z.string().optional(),
 });
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_authed/')({
   component: App,
-  beforeLoad: async () => {
-    const user = await getCurrentUser();
-
-    if (!user) {
-      throw redirect({
-        to: '/sign-in',
-      });
-    }
-
-    return { user };
-  },
   validateSearch: promptSearchSchema,
   loaderDeps: ({ search }) => ({ query: search.query }),
   loader: async ({ deps }) => {
@@ -96,9 +87,6 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { prompts } = Route.useLoaderData();
-  const user = Route.useRouteContext();
-
-  console.log(user);
 
   const setBeingDeleted = useDeleteStore((state) => state.setBeingDeleted);
 
